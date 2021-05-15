@@ -1,0 +1,70 @@
+#
+# |  \/  |           | |               | |
+# | \  / | __ _ _ __ | |__  _   _ _ __ | |_
+# | |\/| |/ _` | '_ \| '_ \| | | | '_ \| __|
+# | |  | | (_| | | | | | | | |_| | | | | |_
+# |_|  |_|\__,_|_| |_|_| |_|\__,_|_| |_|\__|
+
+# MESSAGE PLACEHOLDERS:
+# %player%: Player's name
+# %message%: Chat message by player
+# %default%: Default teamchat message
+#
+# COLOR CODES:
+# You can find a list of color codes at the link below
+# https://minecraft.gamepedia.com/Formatting_codes
+#
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  +        Settings          +
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# If true, it will heal all players on start of a hunt
+healStart: true
+
+# If true, it will feed all players on start of a hunt
+feedStart: true
+
+# If true, it will make the time day on start of a hunt
+dayStart: true
+
+# If true, it will clear all participant's inventories on start of a hunt
+clearStart: true
+
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  +     Manhunt Settings     +
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# If set to true, compass will have a counter of blocks displayed
+# between you and your target
+distanceTracker: true
+
+# If set to true, all players will reset achievements on start
+achievementReset: true
+
+# Change this to see how teamchat looks in game. Placeholders listed above
+# Set to "%default%" to get the default teamchat message
+teamchatMessage: "&c&l[Hunter Chat] &c%player%:&6&l%message%"
+
+# Plays when a manhunt starts with a headstart. Set to a minecraft sound for no error
+startSound: "ENTITY_WITHER_DEATH"
+
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  +     Discord Settings     +
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# If true, discord integration will be enabled
+discordIntegration: false
+
+# Paste your bot's token here for it to work
+botToken: "0000000000"
+
+# Set this to your bot's status (Ex: "Watching <bot-activity-message>")
+botActivityMessage: "A Manhunt bot"
+
+# Set to true for people in minecraft to talk to people in discord
+discordMcChat: false
+
+# If disc-mc-chat is true, put ID of selected text channel for people to talk in
+# Leave this untouched if the above is false
+discordMcChannel: "0000000000"
+

@@ -1,0 +1,34 @@
+name: Manhunt
+version: 1.0.2
+main: com.trende2001.manhunt.Main
+api-version: 1.16
+authors: [ trende2001 ]
+description: manhunt plugin does manhunt stuff (basically like dreams manhunt)
+
+softdepend:
+  - JDA
+
+commands:
+  hunter:
+    description: Allows you to add hunters
+    permission: manhunt.hunter
+  runner:
+    description: Allows you to add speedrunners
+    permission-message: manhunt.speedrunner
+  huntgame:
+    description: Start or stop a hunt and gives info on the plugin
+    permission: manhunt.huntgame
+
+permissions:
+  manhunt.*:
+    description: Every permission in Manhunt
+    children:
+      manhunt.hunter: true
+      manhunt.speedrunner: true
+      manhunt.huntgame: true
+  manhunt.hunter:
+    description: Allows use of the hunter command
+  manhunt.speedrunner:
+    description: Allows use of the runner command
+  manhunt.huntgame:
+    description: Allows use of the huntgame command
