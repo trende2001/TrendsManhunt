@@ -17,13 +17,21 @@ public class SpeedRunner implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (label.equalsIgnoreCase("runner")) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage("[Manhunt] You must be a player to run this command!");
-                return true;
-            }
+//        if (label.equalsIgnoreCase("runner")) {
+//            if (!(sender instanceof Player)) {
+//                sender.sendMessage("[Manhunt] You must be a player to run this command!");
+//                return true;
+//            }
+//            Player player = (Player)sender;
+//            if (player.hasPermission("manhunt.speedrunner")) {
+//                if (args.length == 0) {
+//                    player.sendMessage(ChatColor.GREEN + "Please use /runner help to see list of commands");
+//                    return true;
+//                }
+        if (sender instanceof Player) {
             Player player = (Player)sender;
-            if (player.hasPermission("manhunt.speedrunner")) {
+            if (label.equalsIgnoreCase("runner") &&
+                    player.hasPermission("manhunt.speedrunner")) {
                 if (args.length == 0) {
                     player.sendMessage(ChatColor.GREEN + "Please use /runner help to see list of commands");
                     return true;
