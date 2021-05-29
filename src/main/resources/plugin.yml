@@ -1,5 +1,5 @@
 name: Manhunt
-version: 1.0.2
+version: 1.0.3-SNAPSHOT
 main: com.trende2001.manhunt.Main
 api-version: 1.16
 authors: [ trende2001 ]

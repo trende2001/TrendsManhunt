@@ -23,7 +23,7 @@ public class ChatDisconnectEvent implements Listener {
             event.setCancelled(true);
             String original = this.plugin.getConfig().getString("teamchatMessage");
             String message = original.replaceAll("%player%", player.getDisplayName()).replaceAll("%message%", event.getMessage().substring(1));
-            String normal = "&c&l[Hunter Chat] &c%player%:&6&l%message%";
+            String normal = "&c&l[Hunter Chat] &c%player%: &6&l%message%";
             String msg = normal.replaceAll("%player%", player.getDisplayName()).replaceAll("%message%", event.getMessage().substring(1));
             for (String names : this.plugin.hunters) {
                 Player hunter = Bukkit.getPlayer(names);

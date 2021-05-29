@@ -27,6 +27,8 @@ public class HuntGame implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, final String[] args) {
+        Player target = Bukkit.getPlayer(args[0]);
+//        Player players = (Player) Bukkit.getOnlinePlayers();
         if (label.equalsIgnoreCase("huntgame")) {
             if (!(sender instanceof Player)) {
                 sender.sendMessage("[Manhunt] You must be a player to run this command!");
@@ -72,7 +74,7 @@ public class HuntGame implements CommandExecutor {
                         case "reload":
                             this.plugin.reloadConfig();
                             player.sendMessage(ChatColor.GREEN + "Manhunt has been reloaded!");
-                            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 2.0F);
+                            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 2.0F);
                             return true;
                     }
                     player.sendMessage(ChatColor.RED + "Use /huntgame help for commands");
@@ -100,6 +102,10 @@ public class HuntGame implements CommandExecutor {
                                 Player hunter = Bukkit.getPlayer(name);
                                 hunter.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2147483647, 3, true, false));
                             }
+                            for (String name : this.plugin.speedrunners) {
+                                Player runner = Bukkit.getPlayer(name);
+                                runner.sendTitle(ChatColor.GOLD + "The hunters will be released in " + args[1] + " seconds!", ChatColor.RED + "Run before it's late!", 5, 40, 5);
+                            }
                             Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin)this.plugin, new Runnable() {
                                 int countdown = Integer.parseInt(args[1]);
 
@@ -110,7 +116,7 @@ public class HuntGame implements CommandExecutor {
                                         for (String lame : HuntGame.this.plugin.speedrunners)
                                             name = lame;
                                         Player runner = Bukkit.getPlayer(name);
-                                        runner.sendTitle(ChatColor.RED + "Hunters released!", ChatColor.GOLD + "Run away, they can track your distance!", 5, 25, 5);
+                                        runner.sendTitle(ChatColor.RED + "Hunters released!", ChatColor.GOLD + "Run away!", 5, 25, 5);
                                         try {
                                             runner.getLocation().getWorld().playSound(player.getLocation(), Sound.valueOf(HuntGame.this.plugin.getConfig().getString("startSound")), 1.0F, 1.0F);
                                         } catch (Exception e) {
@@ -135,7 +141,14 @@ public class HuntGame implements CommandExecutor {
                                     } else if (this.countdown == 3) {
                                         Bukkit.broadcastMessage(ChatColor.GOLD + "Hunters will be released in 3 seconds");
                                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 2.0F);
+                                    } else if (this.countdown == 4) {
+                                        Bukkit.broadcastMessage(ChatColor.GOLD + "Hunters will be released in 4 seconds");
+                                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 2.0F);
+                                    } else if (this.countdown == 5) {
+                                        Bukkit.broadcastMessage(ChatColor.GOLD + "Hunters will be released in 5 seconds");
+                                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 2.0F);
                                     }
+
                                     this.countdown--;
                                 }
                             },0L, 20L);

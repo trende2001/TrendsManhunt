@@ -43,10 +43,10 @@ achievementReset: true
 
 # Change this to see how teamchat looks in game. Placeholders listed above
 # Set to "%default%" to get the default teamchat message
-teamchatMessage: "&c&l[Hunter Chat] &c%player%:&6&l%message%"
+teamchatMessage: "&c&l[Hunter Chat] &c%player%: &6&l%message%"
 
 # Plays when a manhunt starts with a headstart. Set to a minecraft sound for no error
-startSound: "ENTITY_WITHER_DEATH"
+startSound: "ENTITY_ENDER_DRAGON_GROWL"
 
 #  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  +     Discord Settings     +
