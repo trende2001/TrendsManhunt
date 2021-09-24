@@ -1,5 +1,5 @@
 name: Manhunt
-version: 1.0.3-SNAPSHOT
+version: ${project.version}
 main: com.trende2001.manhunt.Main
 api-version: 1.16
 authors: [ trende2001 ]
@@ -14,7 +14,7 @@ commands:
     permission: manhunt.hunter
   runner:
     description: Allows you to add speedrunners
-    permission-message: manhunt.speedrunner
+    permission: manhunt.speedrunner
   huntgame:
     description: Start or stop a hunt and gives info on the plugin
     permission: manhunt.huntgame

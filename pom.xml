@@ -6,7 +6,7 @@
 
     <groupId>com.trende2001</groupId>
     <artifactId>manhunt</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.5</version>
     <packaging>jar</packaging>
 
     <name>Manhunt</name>

@@ -20,6 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class HuntGame implements CommandExecutor {
     private Main plugin;
+
     private Player spedrun;
 
     public HuntGame(Main plugin) {
@@ -28,7 +29,6 @@ public class HuntGame implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String label, final String[] args) {
         Player target = Bukkit.getPlayer(args[0]);
-//        Player players = (Player) Bukkit.getOnlinePlayers();
         if (label.equalsIgnoreCase("huntgame")) {
             if (!(sender instanceof Player)) {
                 sender.sendMessage("[Manhunt] You must be a player to run this command!");
@@ -47,7 +47,7 @@ public class HuntGame implements CommandExecutor {
                             player.sendMessage(" ");
                             player.sendMessage(ChatColor.GRAY + "-----------------------------------------------------");
                             player.sendMessage(" ");
-                            player.sendMessage(ChatColor.YELLOW + "/huntgame start <seconds>:");
+                            player.sendMessage(ChatColor.YELLOW + "/huntgame start <time>:");
                             player.sendMessage(ChatColor.GREEN + " Starts a hunt with <seconds> headstart");
                             player.sendMessage(ChatColor.YELLOW + "/huntgame stop: " + ChatColor.GREEN + "Stops the hunt");
                             player.sendMessage(ChatColor.YELLOW + "/huntgame info: " + ChatColor.GREEN + "Gives info on the plugin");
@@ -57,14 +57,23 @@ public class HuntGame implements CommandExecutor {
                             player.sendMessage(ChatColor.GRAY + "-----------------------------------------------------");
                             return true;
                         case "stop":
-                            if (this.plugin.ingame || this.plugin.counting) {
-                                Bukkit.broadcastMessage(ChatColor.GREEN + "The hunt has ended. Use /huntgame start <headstarttime> to start again.");
+                            if (this.plugin.ingame || this.plugin.counting || this.plugin.waitingrunner) {
+                                Bukkit.broadcastMessage(ChatColor.GREEN + "The hunt has ended. Use /huntgame start <time> to start again.");
                                 this.plugin.ingame = false;
                                 this.plugin.counting = false;
+                                this.plugin.waitingrunner = false;
+                                for (String names : this.plugin.hunters) {
+                                    Player hunter = Bukkit.getPlayer(names);
+                                    for (PotionEffect e : hunter.getActivePotionEffects())
+                                        hunter.removePotionEffect(e.getType());
+                                }
+                                if (this.plugin.deadrunners.size() > 0) {
+                                    this.plugin.speedrunners.addAll(this.plugin.deadrunners);
+                                    this.plugin.deadrunners.clear();
+                                }
                                 return true;
                             }
-                            player.sendMessage(ChatColor.RED + "No hunt is active!");
-                            useConfig(player);
+                            player.sendMessage(ChatColor.RED + "No hunt is currently active!");
                             return true;
                         case "info":
                             player.sendMessage(ChatColor.GREEN + "Manhunt by trende2001");
@@ -82,6 +91,10 @@ public class HuntGame implements CommandExecutor {
                 }
                 if (args.length == 2) {
                     if (args[0].equalsIgnoreCase("start")) {
+                        if (this.plugin.ingame) {
+                            player.sendMessage(ChatColor.GREEN + "Hunt already in progress");
+                            return true;
+                        }
                         if (checkPlayer(player)) {
                             if (args[1].equalsIgnoreCase("0")) {
                                 Bukkit.broadcastMessage(ChatColor.GOLD + "Awaiting runner to hit hunter and start the hunt");
@@ -92,7 +105,7 @@ public class HuntGame implements CommandExecutor {
                             try {
                                 Integer.parseInt(args[1]);
                             } catch (NumberFormatException ex) {
-                                player.sendMessage(ChatColor.RED + "Please put an integer to set the time of the headstart or put 0 for no headstart");
+                                player.sendMessage(ChatColor.RED + "Please put a whole number to set the time of the headstart");
                                 return true;
                             }
                             Bukkit.broadcastMessage(ChatColor.GOLD + "The hunters will be released in " + args[1] + " seconds!");
@@ -104,7 +117,7 @@ public class HuntGame implements CommandExecutor {
                             }
                             for (String name : this.plugin.speedrunners) {
                                 Player runner = Bukkit.getPlayer(name);
-                                runner.sendTitle(ChatColor.GOLD + "The hunters will be released in " + args[1] + " seconds!", ChatColor.RED + "Run before it's late!", 5, 40, 5);
+                                runner.sendTitle(ChatColor.GOLD + "In " + args[1] + " seconds,", ChatColor.RED + "Hunters will be released!", 5, 40, 5);
                             }
                             Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask((Plugin)this.plugin, new Runnable() {
                                 int countdown = Integer.parseInt(args[1]);
@@ -112,21 +125,22 @@ public class HuntGame implements CommandExecutor {
                                 public void run() {
                                     if (this.countdown == 0) {
                                         Bukkit.broadcastMessage(Methods.color("&l&cHunters have been released!"));
-                                        String name = null;
-                                        for (String lame : HuntGame.this.plugin.speedrunners)
-                                            name = lame;
-                                        Player runner = Bukkit.getPlayer(name);
-                                        runner.sendTitle(ChatColor.RED + "Hunters released!", ChatColor.GOLD + "Run away!", 5, 25, 5);
-                                        try {
-                                            runner.getLocation().getWorld().playSound(player.getLocation(), Sound.valueOf(HuntGame.this.plugin.getConfig().getString("startSound")), 1.0F, 1.0F);
-                                        } catch (Exception e) {
-                                            Bukkit.broadcastMessage(ChatColor.RED + "An error occured with the start sound. Playing default sound. Check console for more info");
-                                            HuntGame.this.plugin.getLogger().severe("Start sound is invalid. Change configuration to a valid start sound");
-                                            runner.getLocation().getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_DEATH, 1.0F, 1.0F);
-                                        }
                                         HuntGame.this.plugin.counting = false;
+                                        String name = null;
+                                        for (String lame : HuntGame.this.plugin.speedrunners) {
+                                            Player runner = Bukkit.getPlayer(lame);
+                                            runner.sendTitle(ChatColor.RED + "Hunters Released!", ChatColor.GOLD + "Run Away", 5, 25, 5);
+                                            try {
+                                                runner.getLocation().getWorld().playSound(player.getLocation(), Sound.valueOf(HuntGame.this.plugin.getConfig().getString("startSound")), 1.0F, 1.0F);
+                                            } catch (Exception e) {
+                                                Bukkit.broadcastMessage(ChatColor.RED + "An error occured with the start sound, going to play the default sound. Check console for more info.");
+                                                HuntGame.this.plugin.getLogger().severe("Start sound is invalid. Change configuration to a valid start sound");
+                                                runner.getLocation().getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_DEATH, 1.0F, 1.0F);
+                                            }
+                                        }
                                         for (String namez : HuntGame.this.plugin.hunters) {
                                             Player hunter = Bukkit.getPlayer(namez);
+                                            hunter.setWalkSpeed(0.2F);
                                             for (PotionEffect e : hunter.getActivePotionEffects())
                                                 hunter.removePotionEffect(e.getType());
                                         }
@@ -148,7 +162,6 @@ public class HuntGame implements CommandExecutor {
                                         Bukkit.broadcastMessage(ChatColor.GOLD + "Hunters will be released in 5 seconds");
                                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 2.0F);
                                     }
-
                                     this.countdown--;
                                 }
                             },0L, 20L);
@@ -177,14 +190,10 @@ public class HuntGame implements CommandExecutor {
             player.sendMessage(ChatColor.GREEN + "Please select a hunter before starting");
             return false;
         }
-        if (this.plugin.speedrunners.size() >= 2) {
-            player.sendMessage(ChatColor.YELLOW + "Only 1 speedrunner is supported. Multiple will come in later versions");
-            return false;
-        }
         for (String name : this.plugin.speedrunners) {
             Player spedoo = Bukkit.getPlayer(name);
             if (this.plugin.isHunter(spedoo)) {
-                player.sendMessage(ChatColor.RED + "Failed to start. The runner is assigned both speedrunner and hunter. The runner must remove one role");
+                player.sendMessage(ChatColor.RED + "Failed to start. The runner is also assigned as a hunter. The runner must only be in one team");
                 return false;
             }
         }

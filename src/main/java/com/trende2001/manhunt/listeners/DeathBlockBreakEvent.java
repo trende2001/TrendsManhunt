@@ -22,10 +22,22 @@ public class DeathBlockBreakEvent implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        if (this.plugin.isRunner(player) &&
+        if (this.plugin.speedrunners.size() == 1 &&
+                this.plugin.isRunner(player) &&
                 this.plugin.ingame) {
-            Bukkit.broadcastMessage(ChatColor.GREEN + "Hunters win! Do /huntgame start to play again!");
+            event.setDeathMessage(ChatColor.GREEN + "Hunters win! Do /huntplus start to play again!");
+            if (this.plugin.deadrunners.size() > 0) {
+                this.plugin.speedrunners.addAll(this.plugin.deadrunners);
+                this.plugin.deadrunners.clear();
+            }
             this.plugin.ingame = false;
+        }
+        if (this.plugin.speedrunners.size() > 1 &&
+                this.plugin.isRunner(player) &&
+                this.plugin.ingame) {
+            event.setDeathMessage(ChatColor.GREEN + player.getDisplayName() + " has died!");
+            this.plugin.speedrunners.remove(player.getDisplayName());
+            this.plugin.deadrunners.add(player.getDisplayName());
         }
     }
 
@@ -40,8 +52,7 @@ public class DeathBlockBreakEvent implements Listener {
 
     @EventHandler
     public void onDragonDeath(EntityDeathEvent event) {
-        if (event.getEntity() instanceof org.bukkit.entity.EnderDragon &&
-                this.plugin.ingame) {
+        if (event.getEntity() instanceof org.bukkit.entity.EnderDragon && this.plugin.ingame) {
             for (String name : this.plugin.hunters) {
                 Player hunter = Bukkit.getPlayer(name);
                 hunter.sendTitle(ChatColor.AQUA + "The Ender Dragon died!", ChatColor.LIGHT_PURPLE + "The speedrunner wins!", 5, 25, 5);
@@ -57,8 +68,8 @@ public class DeathBlockBreakEvent implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        if (this.plugin.counting &&
-                this.plugin.isHunter(event.getPlayer()))
+        if (this.plugin.counting && this.plugin
+                .isHunter(event.getPlayer()))
             event.setCancelled(true);
     }
 }

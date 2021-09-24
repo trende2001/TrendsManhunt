@@ -21,8 +21,8 @@ public class Hunter implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player)sender;
-            if (label.equalsIgnoreCase("hunter") &&
-                    player.hasPermission("manhunt.hunter")) {
+            if (label.equalsIgnoreCase("hunter") && player
+                    .hasPermission("manhunt.hunter")) {
                 if (args.length == 0) {
                     player.sendMessage(ChatColor.GREEN + "Please use /hunter help to see list of commands");
                     return true;

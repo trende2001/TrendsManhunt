@@ -30,6 +30,9 @@ dayStart: true
 # If true, it will clear all participant's inventories on start of a hunt
 clearStart: true
 
+# If set to true, all players will reset achievements on start
+achievementReset: true
+
 #  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  +     Manhunt Settings     +
 #  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,12 +41,20 @@ clearStart: true
 # between you and your target
 distanceTracker: true
 
-# If set to true, all players will reset achievements on start
-achievementReset: true
-
 # Change this to see how teamchat looks in game. Placeholders listed above
 # Set to "%default%" to get the default teamchat message
-teamchatMessage: "&c&l[Hunter Chat] &c%player%: &6&l%message%"
+
+# Hunter Team Chat
+hunterTeamchatMessage: "&c&l[Hunter Chat] &c%player%: &6&l%message%"
+
+## Runner Team Chat
+#runnerTeamchatMessage: "&a&l[Runner Chat] &a%player%: &b&l%message%"
+
+
+# If you want to spice up your game
+# If true, runner will get a compass pointing to the closest nether fortress
+fortressTracker: false
+#
 
 # Plays when a manhunt starts with a headstart. Set to a minecraft sound for no error
 startSound: "ENTITY_ENDER_DRAGON_GROWL"
