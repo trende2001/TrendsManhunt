@@ -11,7 +11,7 @@
 
     <name>Manhunt</name>
 
-    <description>manhunt plugin does manhunt stuff (basically like dreams manhunt)</description>
+    <description>Minecraft Manhunt with dozens of new features</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

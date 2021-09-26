@@ -47,8 +47,8 @@ distanceTracker: true
 # Hunter Team Chat
 hunterTeamchatMessage: "&c&l[Hunter Chat] &c%player%: &6&l%message%"
 
-## Runner Team Chat
-#runnerTeamchatMessage: "&a&l[Runner Chat] &a%player%: &b&l%message%"
+# Runner Team Chat
+runnerTeamchatMessage: "&a&l[Runner Chat] &a%player%: &b&l%message%"
 
 
 # If you want to spice up your game

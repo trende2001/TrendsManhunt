@@ -3,7 +3,8 @@ version: ${project.version}
 main: com.trende2001.manhunt.Main
 api-version: 1.16
 authors: [ trende2001 ]
-description: manhunt plugin does manhunt stuff (basically like dreams manhunt)
+description: Minecraft Manhunt with dozens of new features
+website: https://dev.bukkit.org/projects/trends-manhunt
 
 softdepend:
   - JDA

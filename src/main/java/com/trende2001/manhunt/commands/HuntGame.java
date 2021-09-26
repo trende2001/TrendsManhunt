@@ -114,6 +114,8 @@ public class HuntGame implements CommandExecutor {
                             for (String name : this.plugin.hunters) {
                                 Player hunter = Bukkit.getPlayer(name);
                                 hunter.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2147483647, 3, true, false));
+                                hunter.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 2147483647, -50, true, false));
+                                hunter.setWalkSpeed(0.0F);
                             }
                             for (String name : this.plugin.speedrunners) {
                                 Player runner = Bukkit.getPlayer(name);
@@ -129,7 +131,7 @@ public class HuntGame implements CommandExecutor {
                                         String name = null;
                                         for (String lame : HuntGame.this.plugin.speedrunners) {
                                             Player runner = Bukkit.getPlayer(lame);
-                                            runner.sendTitle(ChatColor.RED + "Hunters Released!", ChatColor.GOLD + "Run Away", 5, 25, 5);
+                                            runner.sendTitle(ChatColor.RED + "Hunters released!", ChatColor.GOLD + "Run away", 5, 25, 5);
                                             try {
                                                 runner.getLocation().getWorld().playSound(player.getLocation(), Sound.valueOf(HuntGame.this.plugin.getConfig().getString("startSound")), 1.0F, 1.0F);
                                             } catch (Exception e) {
