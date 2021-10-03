@@ -1,5 +1,6 @@
 package com.trende2001.manhunt;
 // commands
+import com.trende2001.external.updater.Updater;
 import com.trende2001.manhunt.commands.HuntGame;
 import com.trende2001.manhunt.commands.Hunter;
 import com.trende2001.manhunt.commands.SpeedRunner;
@@ -81,6 +82,9 @@ public final class Main extends JavaPlugin {
         pm.registerEvents((Listener)new DeathBlockBreakEvent(this), (Plugin)this);
         pm.registerEvents((Listener)new ChatDisconnectEvent(this), (Plugin)this);
     }
+
+    Updater updater = new Updater(this, 480387, this.getFile(), Updater.UpdateType.DEFAULT, false);
+    // updater done!!!!!!! :trol:
 
     private void logs() {
         Logger log = getLogger();
