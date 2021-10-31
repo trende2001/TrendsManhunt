@@ -12,8 +12,8 @@ public class HuntGameTab implements TabCompleter {
 
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (arguments.isEmpty()) {
-            arguments.add("start"); arguments.add("info"); arguments.add("reload");
-            arguments.add("stop"); arguments.add("help");
+            arguments.add("start"); arguments.add("info"); arguments.add("rules");
+            arguments.add("stop"); arguments.add("help"); arguments.add("reload");
         }
         List<String> result = new ArrayList<String>();
         if (args.length == 1) {

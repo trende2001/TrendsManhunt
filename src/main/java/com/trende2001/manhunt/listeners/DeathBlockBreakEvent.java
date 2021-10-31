@@ -1,13 +1,12 @@
 package com.trende2001.manhunt.listeners;
 
 import com.trende2001.manhunt.Main;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
@@ -25,19 +24,45 @@ public class DeathBlockBreakEvent implements Listener {
         if (this.plugin.speedrunners.size() == 1 &&
                 this.plugin.isRunner(player) &&
                 this.plugin.ingame) {
-            event.setDeathMessage(ChatColor.GREEN + "Hunters win! Do /huntplus start to play again!");
+            Bukkit.broadcastMessage(ChatColor.GREEN + player.getDisplayName() + " has been killed!");
+            event.setDeathMessage(ChatColor.GREEN + "Hunters win! Do /huntgame start to play again!");
             if (this.plugin.deadrunners.size() > 0) {
-                this.plugin.speedrunners.addAll(this.plugin.deadrunners);
+                for (String name : this.plugin.deadrunners) {
+                    Player deadRunner = Bukkit.getPlayer(name);
+                    if (deadRunner.isOnline())
+                        this.plugin.speedrunners.add(name);
+                }
                 this.plugin.deadrunners.clear();
             }
             this.plugin.ingame = false;
         }
-        if (this.plugin.speedrunners.size() > 1 &&
-                this.plugin.isRunner(player) &&
-                this.plugin.ingame) {
-            event.setDeathMessage(ChatColor.GREEN + player.getDisplayName() + " has died!");
-            this.plugin.speedrunners.remove(player.getDisplayName());
-            this.plugin.deadrunners.add(player.getDisplayName());
+    }
+
+    @EventHandler
+    public void onLethalHit(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player)event.getEntity();
+            if (this.plugin.speedrunners.size() > 1 && this.plugin.ingame &&
+                    this.plugin.isRunner(player) &&
+                    event.getFinalDamage() > player.getHealth()) {
+                event.setCancelled(true);
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0F, 1.0F);
+                if (this.plugin.getConfig().getString("particleEffect") != null && !this.plugin.getConfig().getString("particleEffect").equals("NONE"))
+                    try {
+                        player.getWorld().spawnParticle(Particle.valueOf(this.plugin.getConfig().getString("particleEffect")), player.getLocation(), 20);
+                    } catch (Exception e) {
+                        this.plugin.getLogger().severe("Particle was invalid. Playing default particle instead.");
+                        player.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, player.getLocation(), 20);
+                    }
+                player.setGameMode(GameMode.SPECTATOR);
+                Bukkit.broadcastMessage(ChatColor.GREEN + player.getDisplayName() + " has been killed!");
+                for (ItemStack i : player.getInventory().getContents()) {
+                    if (i != null)
+                        player.getWorld().dropItemNaturally(player.getLocation(), i);
+                }
+                this.plugin.speedrunners.remove(player.getName());
+                this.plugin.deadrunners.add(player.getName());
+            }
         }
     }
 

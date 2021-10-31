@@ -37,7 +37,7 @@ public class HuntGame implements CommandExecutor {
             final Player player = (Player)sender;
             if (player.hasPermission("manhunt.huntgame")) {
                 if (args.length == 0) {
-                    player.sendMessage(ChatColor.GREEN + "Please use /huntgame help to see list of commands");
+                    player.sendMessage(ChatColor.GREEN + "Please use /huntgame help to see a list of commands");
                     return true;
                 }
                 if (args.length == 1) {
@@ -53,8 +53,12 @@ public class HuntGame implements CommandExecutor {
                             player.sendMessage(ChatColor.YELLOW + "/huntgame info: " + ChatColor.GREEN + "Gives info on the plugin");
                             player.sendMessage(ChatColor.YELLOW + "/huntgame reload: " + ChatColor.GREEN + "Reloads the config");
                             player.sendMessage(ChatColor.YELLOW + "/huntgame help: " + ChatColor.GREEN + "Displays this page");
+                            player.sendMessage(ChatColor.YELLOW + "/huntgame rules: " + ChatColor.GREEN + "Displays rules of the Traditional Manhunt");
                             player.sendMessage(" ");
                             player.sendMessage(ChatColor.GRAY + "-----------------------------------------------------");
+                            return true;
+                        case "rules":
+                            player.openBook(this.plugin.ruleBook());
                             return true;
                         case "stop":
                             if (this.plugin.ingame || this.plugin.counting || this.plugin.waitingrunner) {
@@ -105,7 +109,7 @@ public class HuntGame implements CommandExecutor {
                             try {
                                 Integer.parseInt(args[1]);
                             } catch (NumberFormatException ex) {
-                                player.sendMessage(ChatColor.RED + "Please put a whole number to set the time of the headstart");
+                                player.sendMessage(ChatColor.RED + "Please put a whole number to set the time of the headstart.");
                                 return true;
                             }
                             Bukkit.broadcastMessage(ChatColor.GOLD + "The hunters will be released in " + args[1] + " seconds!");
@@ -131,7 +135,7 @@ public class HuntGame implements CommandExecutor {
                                         String name = null;
                                         for (String lame : HuntGame.this.plugin.speedrunners) {
                                             Player runner = Bukkit.getPlayer(lame);
-                                            runner.sendTitle(ChatColor.RED + "Hunters released!", ChatColor.GOLD + "Run away", 5, 25, 5);
+                                            runner.sendTitle(ChatColor.RED + "Hunters Released!", ChatColor.GOLD + "Run away!", 5, 25, 5);
                                             try {
                                                 runner.getLocation().getWorld().playSound(player.getLocation(), Sound.valueOf(HuntGame.this.plugin.getConfig().getString("startSound")), 1.0F, 1.0F);
                                             } catch (Exception e) {
@@ -236,6 +240,16 @@ public class HuntGame implements CommandExecutor {
             for (String lames : this.plugin.speedrunners) {
                 Player rn = Bukkit.getPlayer(lames);
                 rn.getInventory().clear();
+            }
+        }
+        if (this.plugin.getConfig().getBoolean("randomWildTeleportStart")) {
+            for (String names : this.plugin.hunters) {
+                Player hunt = Bukkit.getPlayer(names);
+                Methods.generateLoc(hunt);
+                for (String lames : this.plugin.speedrunners) {
+                    Player rn = Bukkit.getPlayer(lames);
+                    rn.teleport(hunt);
+                }
             }
         }
         if (this.plugin.getConfig().getBoolean("achievementReset")) {

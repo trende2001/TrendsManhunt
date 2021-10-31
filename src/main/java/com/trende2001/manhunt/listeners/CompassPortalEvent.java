@@ -51,7 +51,7 @@ public class CompassPortalEvent implements Listener {
             if (this.plugin.isHunter(player) &&
                     this.plugin.speedrunners.size() > 1 && (
                     player.getInventory().getItemInMainHand().getType() == Material.COMPASS || player.getInventory().getItemInOffHand().getType() == Material.COMPASS)) {
-                int playernum = this.plugin.huntersNumber.get(player.getDisplayName()).intValue();
+                int playernum = this.plugin.huntersNumber.get(player.getName());
                 String name = this.plugin.speedrunners.get(playernum);
                 this.currentRunner = Bukkit.getPlayer(name);
             }
@@ -59,9 +59,9 @@ public class CompassPortalEvent implements Listener {
                     event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) &&
                     player.getInventory().getItemInMainHand().getType() == Material.COMPASS &&
                     this.plugin.getServer().getOnlinePlayers().size() > 1 && this.plugin.speedrunners.size() > 1) {
-                int currentPlayer = this.plugin.huntersNumber.get(player.getDisplayName()).intValue();
-                this.plugin.huntersNumber.put(player.getDisplayName(), Integer.valueOf((currentPlayer + 1) % this.plugin.speedrunners.size()));
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "No longer hunting: " + this.currentRunner.getDisplayName()));
+                int currentPlayer = this.plugin.huntersNumber.get(player.getName());
+                this.plugin.huntersNumber.put(player.getName(), (currentPlayer + 1) % this.plugin.speedrunners.size());
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "No longer hunting: " + this.currentRunner.getName()));
             }
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
                 if (this.plugin.isHunter(player) &&
@@ -87,20 +87,20 @@ public class CompassPortalEvent implements Listener {
                                 compassmeta.setLodestone(this.currentRunner.getLocation());
                                 compass.setItemMeta((ItemMeta)compassmeta);
                                 if (this.plugin.getConfig().getBoolean("distanceTracker")) {
-                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + blocks + "m &f- &7&lHunting: &a&l" + this.currentRunner.getDisplayName())));
+                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + blocks + "m &f- &7&lHunting: &a&l" + this.currentRunner.getName())));
                                     return;
                                 }
-                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Hunting: " + this.currentRunner.getDisplayName()));
+                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Hunting: " + this.currentRunner.getName()));
                                 return;
                             }
                             if (compassmeta.hasLodestone())
                                 compass.setItemMeta(this.normalmeta);
                             player.setCompassTarget(this.currentRunner.getLocation());
                             if (this.plugin.getConfig().getBoolean("distanceTracker")) {
-                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + blocks + "m &f- &7&lHunting: &a&l" + this.currentRunner.getDisplayName())));
+                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + blocks + "m &f- &7&lHunting: &a&l" + this.currentRunner.getName())));
                                 return;
                             }
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Hunting: " + this.currentRunner.getDisplayName()));
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Hunting: " + this.currentRunner.getName()));
                             return;
                         }
                         if (player.getWorld().getEnvironment() == World.Environment.NORMAL) {
@@ -114,10 +114,10 @@ public class CompassPortalEvent implements Listener {
                                 compass.setItemMeta(this.normalmeta);
                             player.setCompassTarget(portaloc);
                             if (this.plugin.getConfig().getBoolean("distanceTracker")) {
-                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + distance + "m &f- &7&lHunting: &a&l" + this.currentRunner.getDisplayName() + "'s portal")));
+                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + distance + "m &f- &7&lHunting: &a&l" + this.currentRunner.getName() + "'s portal")));
                                 return;
                             }
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Hunting: " + this.currentRunner.getDisplayName() + "'s portal"));
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Hunting: " + this.currentRunner.getName() + "'s portal"));
                             return;
                         }
                         if (player.getWorld().getEnvironment() == World.Environment.NETHER) {
@@ -144,20 +144,20 @@ public class CompassPortalEvent implements Listener {
                                 compassmeta.setLodestone(this.spedrun.getLocation());
                                 compass.setItemMeta((ItemMeta)compassmeta);
                                 if (this.plugin.getConfig().getBoolean("distanceTracker")) {
-                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + blocks + "m &f- &7&lHunting: &a&l" + this.spedrun.getDisplayName())));
+                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + blocks + "m &f- &7&lHunting: &a&l" + this.spedrun.getName())));
                                     return;
                                 }
-                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.GREEN + "Hunting: " + this.spedrun.getDisplayName()));
+                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Hunting: " + this.spedrun.getName()));
                                 return;
                             }
                             if (compassmeta.hasLodestone())
                                 compass.setItemMeta(this.normalmeta);
                             player.setCompassTarget(this.spedrun.getLocation());
                             if (this.plugin.getConfig().getBoolean("distanceTracker")) {
-                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + blocks + "m &f- &7&lHunting: &a&l" + this.spedrun.getDisplayName())));
+                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + blocks + "m &f- &7&lHunting: &a&l" + this.spedrun.getName())));
                                 return;
                             }
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.GREEN + "Hunting: " + this.spedrun.getDisplayName()));
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Hunting: " + this.spedrun.getName()));
                             return;
                         }
                         if (player.getWorld().getEnvironment() == World.Environment.NORMAL) {
@@ -167,18 +167,18 @@ public class CompassPortalEvent implements Listener {
                                 compass.setItemMeta(this.normalmeta);
                             player.setCompassTarget(portaloc);
                             if (this.plugin.getConfig().getBoolean("distanceTracker")) {
-                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + distance + "m &f- &7&lHunting: &a&l" + this.spedrun.getDisplayName() + "'s portal")));
+                                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&', "&7&lDistance: &b&l" + distance + "m &f- &7&lHunting: &a&l" + this.spedrun.getName() + "'s portal")));
                                 return;
                             }
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.GREEN + "Hunting: " + this.spedrun.getDisplayName() + "'s portal"));
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Hunting: " + this.spedrun.getName() + "'s portal"));
                             return;
                         }
                         if (player.getWorld().getEnvironment() == World.Environment.NETHER) {
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.RED + "No runner in The Nether to track"));
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "No runner in The Nether to track"));
                             return;
                         }
                         if (player.getWorld().getEnvironment() == World.Environment.THE_END)
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.RED + "No runner in The End to track"));
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "No runner in The End to track"));
                     }
                 }
                 if (!this.plugin.ingame)
@@ -194,8 +194,7 @@ public class CompassPortalEvent implements Listener {
                     ItemStack compass = player.getInventory().getItemInMainHand();
                     CompassMeta compassMeta = (CompassMeta)compass.getItemMeta();
                     if (!compassMeta.hasLodestone()) {
-                        Location fortress = player.getWorld().locateNearestStructure(player.getLocation(), StructureType.NETHER_FORTRESS, 2147483647, true);
-                        this.netherfortress = fortress;
+                        this.netherfortress = player.getWorld().locateNearestStructure(player.getLocation(), StructureType.NETHER_FORTRESS, 2147483647, true);
                     }
                     try {
                         compassMeta.setLodestoneTracked(false);
@@ -205,14 +204,14 @@ public class CompassPortalEvent implements Listener {
                         return;
                     }
                     compassMeta.setLodestone(this.netherfortress);
-                    compass.setItemMeta((ItemMeta)compassMeta);
-                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.GREEN + "Pointing to nearest Nether Fortress"));
+                    compass.setItemMeta(compassMeta);
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Pointing to nearest Nether Fortress"));
                 }
             }
         }
         if (this.plugin.isHunter(player) && player.getInventory().getItemInMainHand().getType() == Material.COMPASS && (
                 event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, (BaseComponent)new TextComponent(ChatColor.RED + "No players to track"));
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "No players to track"));
     }
 
     @EventHandler
@@ -226,11 +225,11 @@ public class CompassPortalEvent implements Listener {
                     event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL &&
                     player.getWorld().getEnvironment() == World.Environment.NORMAL) {
                 if (player.getInventory().firstEmpty() == -1) {
-                    player.sendMessage(ChatColor.GREEN + "Your inventory is full. The fortress tracker has been dropped on the ground");
+                    player.sendMessage(ChatColor.GREEN + "Your inventory is full. The fortress tracker has been dropped on the ground.");
                     player.getWorld().dropItemNaturally(player.getLocation(), getFortressTracker());
                     return;
                 }
-                player.getInventory().addItem(new ItemStack[] { getFortressTracker() });
+                player.getInventory().addItem(getFortressTracker());
             }
         }
     }

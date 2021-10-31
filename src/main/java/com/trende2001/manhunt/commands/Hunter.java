@@ -21,8 +21,8 @@ public class Hunter implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player)sender;
-            if (label.equalsIgnoreCase("hunter") && player
-                    .hasPermission("manhunt.hunter")) {
+            if (label.equalsIgnoreCase("hunter") &&
+                    player.hasPermission("manhunt.hunter")) {
                 if (args.length == 0) {
                     player.sendMessage(ChatColor.GREEN + "Please use /hunter help to see list of commands");
                     return true;
@@ -48,8 +48,10 @@ public class Hunter implements CommandExecutor {
                                 return true;
                             }
                             player.sendMessage(ChatColor.GREEN + "Here are the hunters:");
-                            for (String name : this.plugin.hunters)
-                                player.sendMessage(Methods.color("&7- &a" + name));
+                            for (String name : this.plugin.hunters) {
+                                Player hunterName = Bukkit.getPlayer(name);
+                                player.sendMessage(Methods.color("&7- &a" + hunterName.getDisplayName()));
+                            }
                             return true;
                         case "clear":
                             if (this.plugin.hunters.size() == 0) {
@@ -59,7 +61,7 @@ public class Hunter implements CommandExecutor {
                             player.sendMessage(ChatColor.GREEN + "All hunters have been cleared");
                             for (String name : this.plugin.hunters) {
                                 Player hunter = Bukkit.getPlayer(name);
-                                hunter.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.COMPASS) });
+                                hunter.getInventory().removeItem(new ItemStack(Material.COMPASS));
                             }
                             this.plugin.hunters.clear();
                             return true;
@@ -77,14 +79,16 @@ public class Hunter implements CommandExecutor {
                         if (!this.plugin.isHunter(target)) {
                             if (target == player) {
                                 player.sendMessage(ChatColor.GREEN + "You have been added as a hunter");
-                                player.getInventory().addItem(new ItemStack[] { new ItemStack(Material.COMPASS) });
-                                this.plugin.hunters.add(player.getDisplayName());
+                                player.getInventory().addItem(new ItemStack(Material.COMPASS));
+                                this.plugin.hunters.add(player.getName());
+                                this.plugin.huntersNumber.put(player.getName(), 0);
                                 return true;
                             }
                             target.sendMessage(ChatColor.GREEN + "You have been added as a hunter");
-                            target.getInventory().addItem(new ItemStack[] { new ItemStack(Material.COMPASS) });
+                            target.getInventory().addItem(new ItemStack(Material.COMPASS));
                             player.sendMessage(ChatColor.GREEN + target.getDisplayName() + " has been added as a hunter");
-                            this.plugin.hunters.add(target.getDisplayName());
+                            this.plugin.hunters.add(target.getName());
+                            this.plugin.huntersNumber.put(target.getName(), 0);
                             return true;
                         }
                         if (target == player) {
@@ -103,14 +107,14 @@ public class Hunter implements CommandExecutor {
                         if (this.plugin.isHunter(target)) {
                             if (target == player) {
                                 player.sendMessage(ChatColor.GREEN + "You are no longer a hunter");
-                                player.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.COMPASS) });
-                                this.plugin.hunters.remove(player.getDisplayName());
+                                player.getInventory().removeItem(new ItemStack(Material.COMPASS));
+                                this.plugin.hunters.remove(player.getName());
                                 return true;
                             }
                             target.sendMessage(ChatColor.GREEN + "You are no longer a hunter");
-                            target.getInventory().removeItem(new ItemStack[] { new ItemStack(Material.COMPASS) });
+                            target.getInventory().removeItem(new ItemStack(Material.COMPASS));
                             player.sendMessage(ChatColor.GREEN + target.getDisplayName() + " is no longer a hunter");
-                            this.plugin.hunters.remove(target.getDisplayName());
+                            this.plugin.hunters.remove(target.getName());
                             return true;
                         }
                         if (target == player) {

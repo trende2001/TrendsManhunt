@@ -17,10 +17,13 @@ public class SpeedRunner implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
+        if (label.equalsIgnoreCase("runner")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("[Manhunt] You must be a player to run this command!");
+                return true;
+            }
             Player player = (Player)sender;
-            if (label.equalsIgnoreCase("runner") && player
-                    .hasPermission("manhunt.speedrunner")) {
+            if (player.hasPermission("manhunt.speedrunner")) {
                 if (args.length == 0) {
                     player.sendMessage(ChatColor.GREEN + "Please use /runner help to see list of commands");
                     return true;
@@ -32,9 +35,11 @@ public class SpeedRunner implements CommandExecutor {
                                 player.sendMessage(ChatColor.GREEN + "No speedrunners have been set");
                                 return true;
                             }
-                            player.sendMessage(ChatColor.GREEN + "Here is the speedrunner:");
-                            for (String name : this.plugin.speedrunners)
-                                player.sendMessage(Methods.color("&7- &a" + name));
+                            player.sendMessage(ChatColor.GREEN + "Here are the runners:");
+                            for (String name : this.plugin.speedrunners) {
+                                Player runnerName = Bukkit.getPlayer(name);
+                                player.sendMessage(Methods.color("&7- &a" + runnerName.getDisplayName()));
+                            }
                             return true;
                         case "help":
                             player.sendMessage(ChatColor.GREEN + "                 Manhunt Runner Help                ");
@@ -68,15 +73,15 @@ public class SpeedRunner implements CommandExecutor {
                             player.sendMessage(ChatColor.RED + "Could not find player!");
                             return true;
                         }
-                        if (!this.plugin.speedrunners.contains(target.getDisplayName())) {
+                        if (!this.plugin.speedrunners.contains(target.getName())) {
                             if (target == player) {
                                 player.sendMessage(ChatColor.GREEN + "You have been added as a speedrunner");
-                                this.plugin.speedrunners.add(player.getDisplayName());
+                                this.plugin.speedrunners.add(player.getName());
                                 return true;
                             }
                             target.sendMessage(ChatColor.GREEN + "You have been added as a speedrunner");
                             player.sendMessage(ChatColor.GREEN + target.getDisplayName() + " is now a speedrunner");
-                            this.plugin.speedrunners.add(target.getDisplayName());
+                            this.plugin.speedrunners.add(target.getName());
                             return true;
                         }
                         if (target == player) {
@@ -95,12 +100,12 @@ public class SpeedRunner implements CommandExecutor {
                         if (this.plugin.isRunner(target)) {
                             if (target == player) {
                                 player.sendMessage(ChatColor.GREEN + "You are no longer a speedrunner");
-                                this.plugin.speedrunners.remove(player.getDisplayName());
+                                this.plugin.speedrunners.remove(player.getName());
                                 return true;
                             }
-                            target.sendMessage(ChatColor.RED + "You are no longer a speedrunner");
+                            target.sendMessage(ChatColor.GREEN + "You are no longer a speedrunner");
                             player.sendMessage(ChatColor.GREEN + target.getDisplayName() + " is no longer a speedrunner");
-                            this.plugin.speedrunners.remove(target.getDisplayName());
+                            this.plugin.speedrunners.remove(target.getName());
                             return true;
                         }
                         if (target == player) {

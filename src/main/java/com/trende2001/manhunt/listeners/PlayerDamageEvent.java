@@ -23,9 +23,9 @@ public class PlayerDamageEvent implements Listener {
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if (this.plugin.isHunter(player)) {
-            this.plugin.hunters.remove(player.getDisplayName());
+            this.plugin.hunters.remove(player.getName());
         } else if (this.plugin.isRunner(player)) {
-            this.plugin.speedrunners.remove(player.getDisplayName());
+            this.plugin.speedrunners.remove(player.getName());
         }
     }
 
