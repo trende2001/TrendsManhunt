@@ -20,7 +20,7 @@ public class DropRespawnEvent implements Listener {
     public void onRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         if (this.plugin.isHunter(player))
-            player.getInventory().addItem(new ItemStack[] { new ItemStack(Material.COMPASS) });
+            player.getInventory().addItem(new ItemStack(Material.COMPASS));
     }
 
     @EventHandler

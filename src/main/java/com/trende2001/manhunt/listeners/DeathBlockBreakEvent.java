@@ -1,8 +1,15 @@
 package com.trende2001.manhunt.listeners;
 
 import com.trende2001.manhunt.Main;
-import org.bukkit.*;
+import com.trende2001.manhunt.api.HuntEndEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -21,20 +28,27 @@ public class DeathBlockBreakEvent implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        if (this.plugin.speedrunners.size() == 1 &&
+        if (this.plugin.speedRunners.size() == 1 &&
                 this.plugin.isRunner(player) &&
-                this.plugin.ingame) {
-            Bukkit.broadcastMessage(ChatColor.GREEN + player.getDisplayName() + " has been killed!");
-            event.setDeathMessage(ChatColor.GREEN + "Hunters win! Do /huntgame start to play again!");
-            if (this.plugin.deadrunners.size() > 0) {
-                for (String name : this.plugin.deadrunners) {
+                this.plugin.inGame) {
+            String deathMessage = ChatColor.GREEN + event.getDeathMessage();
+            event.setDeathMessage(deathMessage);
+            if (this.plugin.hunters.size() > 1) {
+                Bukkit.broadcastMessage(ChatColor.GREEN + "The hunters win! Do /huntgame start to play again!");
+            } else {
+                Bukkit.broadcastMessage(ChatColor.GREEN + "The hunter wins! Do /huntgame start to play again!");
+            }
+            if (this.plugin.deadRunners.size() > 0) {
+                for (String name : this.plugin.deadRunners) {
                     Player deadRunner = Bukkit.getPlayer(name);
                     if (deadRunner.isOnline())
-                        this.plugin.speedrunners.add(name);
+                        this.plugin.speedRunners.add(name);
                 }
-                this.plugin.deadrunners.clear();
+                this.plugin.deadRunners.clear();
             }
-            this.plugin.ingame = false;
+            this.plugin.inGame = false;
+            HuntEndEvent gameEndEvent = new HuntEndEvent();
+            Bukkit.getServer().getPluginManager().callEvent((Event)gameEndEvent);
         }
     }
 
@@ -42,7 +56,7 @@ public class DeathBlockBreakEvent implements Listener {
     public void onLethalHit(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player)event.getEntity();
-            if (this.plugin.speedrunners.size() > 1 && this.plugin.ingame &&
+            if (this.plugin.speedRunners.size() > 1 && this.plugin.inGame &&
                     this.plugin.isRunner(player) &&
                     event.getFinalDamage() > player.getHealth()) {
                 event.setCancelled(true);
@@ -51,17 +65,19 @@ public class DeathBlockBreakEvent implements Listener {
                     try {
                         player.getWorld().spawnParticle(Particle.valueOf(this.plugin.getConfig().getString("particleEffect")), player.getLocation(), 20);
                     } catch (Exception e) {
-                        this.plugin.getLogger().severe("Particle was invalid. Playing default particle instead.");
+                        this.plugin.getLogger().severe("Particle type is invalid. Playing default particle. Please change it in the config file");
                         player.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, player.getLocation(), 20);
                     }
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 1.0F, 1.0F);
                 player.setGameMode(GameMode.SPECTATOR);
+                player.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "You were killed!", ChatColor.GRAY + "It is now time to spectate!", 0, 40, 10);
                 Bukkit.broadcastMessage(ChatColor.GREEN + player.getDisplayName() + " has been killed!");
                 for (ItemStack i : player.getInventory().getContents()) {
                     if (i != null)
                         player.getWorld().dropItemNaturally(player.getLocation(), i);
                 }
-                this.plugin.speedrunners.remove(player.getName());
-                this.plugin.deadrunners.add(player.getName());
+                this.plugin.speedRunners.remove(player.getName());
+                this.plugin.deadRunners.add(player.getName());
             }
         }
     }
@@ -77,24 +93,32 @@ public class DeathBlockBreakEvent implements Listener {
 
     @EventHandler
     public void onDragonDeath(EntityDeathEvent event) {
-        if (event.getEntity() instanceof org.bukkit.entity.EnderDragon && this.plugin.ingame) {
-            for (String name : this.plugin.hunters) {
-                Player hunter = Bukkit.getPlayer(name);
-                hunter.sendTitle(ChatColor.AQUA + "The Ender Dragon died!", ChatColor.LIGHT_PURPLE + "The speedrunner wins!", 5, 25, 5);
+        if (event.getEntity() instanceof org.bukkit.entity.EnderDragon &&
+                this.plugin.inGame) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (this.plugin.speedRunners.contains(player.getName()) || this.plugin.hunters.contains(player.getName())) {
+                    if (this.plugin.speedRunners.size() == 1) {
+                        player.sendTitle(ChatColor.AQUA + "The Dragon died!", ChatColor.LIGHT_PURPLE + "The runner wins!", 5, 100, 5);
+                        continue;
+                    }
+                    player.sendTitle(ChatColor.AQUA + "The Dragon died!", ChatColor.LIGHT_PURPLE + "The runners win!", 5, 100, 5);
+                }
             }
-            for (String name : this.plugin.speedrunners) {
-                Player runner = Bukkit.getPlayer(name);
-                runner.sendTitle(ChatColor.AQUA + "The Ender Dragon died!", ChatColor.LIGHT_PURPLE + "The speedrunner wins!", 5, 25, 5);
+            if (this.plugin.speedRunners.size() == 1) {
+                Bukkit.broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "The runner wins! Do /huntgame start to play again!");
+            } else {
+                Bukkit.broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "The runners win! Do /huntgame start to play again!");
             }
-            Bukkit.broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "The speedrunner wins! Do /huntgame start to play again!");
-            this.plugin.ingame = false;
+            this.plugin.inGame = false;
+            HuntEndEvent gameEndEvent = new HuntEndEvent();
+            Bukkit.getServer().getPluginManager().callEvent((Event)gameEndEvent);
         }
     }
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        if (this.plugin.counting && this.plugin
-                .isHunter(event.getPlayer()))
+        if (this.plugin.countingDown &&
+                this.plugin.isHunter(event.getPlayer()))
             event.setCancelled(true);
     }
 }

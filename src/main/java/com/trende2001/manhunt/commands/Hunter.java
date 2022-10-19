@@ -30,17 +30,11 @@ public class Hunter implements CommandExecutor {
                 if (args.length == 1) {
                     switch (args[0].toLowerCase()) {
                         case "help":
-                            player.sendMessage(ChatColor.GREEN + "                 Manhunt Hunter Help                ");
-                            player.sendMessage(" ");
-                            player.sendMessage(ChatColor.GRAY + "-----------------------------------------------------");
-                            player.sendMessage(" ");
                             player.sendMessage(ChatColor.YELLOW + "/hunter add <player>: " + ChatColor.GREEN + "Add a hunter");
                             player.sendMessage(ChatColor.YELLOW + "/hunter remove <player>: " + ChatColor.GREEN + "Remove a hunter");
                             player.sendMessage(ChatColor.YELLOW + "/hunter list: " + ChatColor.GREEN + "Lists all the hunters");
                             player.sendMessage(ChatColor.YELLOW + "/hunter clear: " + ChatColor.GREEN + "Removes all hunters");
                             player.sendMessage(ChatColor.YELLOW + "/hunter help: " + ChatColor.GREEN + "Displays this page");
-                            player.sendMessage(" ");
-                            player.sendMessage(ChatColor.GRAY + "-----------------------------------------------------");
                             return true;
                         case "list":
                             if (this.plugin.hunters.size() == 0) {

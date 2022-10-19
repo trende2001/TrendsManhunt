@@ -19,7 +19,7 @@ public class DiscordCommands extends ListenerAdapter {
         if (!event.getAuthor().isBot()) {
             TextChannel channel = event.getChannel();
             if (event.getMessage().getContentRaw().equals("!huntstatus"))
-                if (!this.plugin.ingame) {
+                if (!this.plugin.inGame) {
                     channel.sendMessage("No hunt is active").queue();
                 } else {
                     channel.sendMessage("A hunt is active. List of players:").queue();
@@ -27,7 +27,7 @@ public class DiscordCommands extends ListenerAdapter {
                         Player hunter = Bukkit.getPlayer(name);
                         channel.sendMessage("**" + hunter.getDisplayName() + "** is a **hunter!**").queue();
                     }
-                    for (String names : this.plugin.speedrunners) {
+                    for (String names : this.plugin.speedRunners) {
                         Player runner = Bukkit.getPlayer(names);
                         channel.sendMessage("**" + runner.getDisplayName() + "** is the **runner!**").queue();
                     }
